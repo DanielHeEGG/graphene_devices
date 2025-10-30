@@ -1,0 +1,3 @@
+[submodule "gdslib_fun_symbols"]
+	path = gdslib_fun_symbols
+	url = https://github.com/DanielHeEGG/gdslib_fun_symbols
