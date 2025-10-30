@@ -1,0 +1,32 @@
+name: Build and Release
+on:
+    push:
+        tags:
+            - "v[1-9]+"
+
+permissions:
+    contents: write
+
+jobs:
+    build-and-release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                submodules: recursive
+            - uses: actions/setup-python@v6
+              with:
+                python-version: "3.13"
+            - run: pip install -r requirements.txt
+            - run: pip install notebook
+            - run: jupyter execute main.ipynb
+            - run: mv "main.gds" "${{ github.event.repository.name }}_${{ github.ref_name }}.gds"
+            - uses: softprops/action-gh-release@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  name: Release ${{ github.ref_name }}
+                  draft: false
+                  prerelease: false
+                  files: "./${{ github.event.repository.name }}_${{ github.ref_name }}.gds"
